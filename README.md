@@ -122,6 +122,13 @@ Health endpoint:
 curl http://localhost:8000/api/health/
 ```
 
+FastAPI now includes a PostgreSQL connection check.
+If the DB is unavailable, FastAPI still starts (graceful mode), and health returns:
+
+- `status: "DOWN"`
+- `db_status: "DOWN"`
+- an `error` message with connection details
+
 ## Run FastAPI Service (Conda)
 
 From `smart-city-backend/fastapi-service/`:
