@@ -201,3 +201,25 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 - Current setup is scaffold-level and ready for feature modules.
 - Recommended next step: add dedicated schemas or separate databases per service as the architecture evolves.
 - If you change `CORS_ALLOWED_ORIGINS`, restart both backend services.
+
+## CI Expectations
+
+GitHub Actions now provides baseline PR quality gates for this backend repo through
+[`backend-ci.yml`](./.github/workflows/backend-ci.yml).
+
+Required checks for pull requests:
+
+- `spring-boot`: runs `mvn -B test` and `mvn -B package -DskipTests`
+- `fastapi`: runs `ruff`, `pytest`, and `python -m compileall app tests`
+
+Merge blocking policy:
+
+- In GitHub, add a branch protection rule or ruleset for your protected branches (`main`, and `dev` if used).
+- Enable `Require a pull request before merging`.
+- Enable `Require status checks to pass before merging`.
+- Mark the `spring-boot` and `fastapi` jobs from the `Backend CI` workflow as required checks.
+
+Status expectations:
+
+- A PR is merge-ready only when all required CI checks are green.
+- Any failed or skipped required check must be fixed or rerun before merge.
