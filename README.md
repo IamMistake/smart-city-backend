@@ -33,22 +33,42 @@ smart-city-backend/
 - Maven 3.9+
 - Python 3.11 (for FastAPI)
 
-## Install Java 17+/21 and Maven (Arch Linux)
+## Install Java 17+/21 and Maven (Windows/macOS/Linux)
 
 Recommended (Java 21):
 
-```bash
-sudo pacman -Syu jdk21-openjdk maven
-sudo archlinux-java set java-21-openjdk
+### Windows (PowerShell, using winget)
+
+```powershell
+winget install -e --id EclipseAdoptium.Temurin.21.JDK
+winget install -e --id Apache.Maven
 java -version
 mvn -v
 ```
 
 Alternative (Java 17):
 
+```powershell
+winget install -e --id EclipseAdoptium.Temurin.17.JDK
+winget install -e --id Apache.Maven
+java -version
+mvn -v
+```
+
+### macOS (Homebrew)
+
 ```bash
-sudo pacman -Syu jdk17-openjdk maven
-sudo archlinux-java set java-17-openjdk
+brew install --cask temurin
+brew install maven
+java -version
+mvn -v
+```
+
+### Linux
+
+Install OpenJDK 21 (or 17) and Maven using your distro package manager, then verify:
+
+```bash
 java -version
 mvn -v
 ```
@@ -57,7 +77,14 @@ mvn -v
 
 1. Copy env template:
 
-```bash
+```powershell
+# PowerShell (Windows)
+Copy-Item .env.example .env
+
+# Command Prompt (Windows)
+copy .env.example .env
+
+# macOS/Linux
 cp .env.example .env
 ```
 
@@ -95,6 +122,10 @@ mvn spring-boot:run
 Health endpoint:
 
 ```bash
+# Windows PowerShell
+curl.exe http://localhost:8080/api/health/
+
+# macOS/Linux
 curl http://localhost:8080/api/health/
 ```
 
@@ -109,16 +140,40 @@ mvn clean package
 
 From `smart-city-backend/fastapi-service/`:
 
+### Windows (PowerShell)
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Windows (Command Prompt)
+
+```bat
+py -3.11 -m venv .venv
+.venv\Scripts\activate.bat
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### macOS/Linux
+
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Health endpoint:
 
 ```bash
+# Windows PowerShell
+curl.exe http://localhost:8000/api/health/
+
+# macOS/Linux
 curl http://localhost:8000/api/health/
 ```
 
