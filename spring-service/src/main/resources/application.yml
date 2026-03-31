@@ -7,11 +7,17 @@ spring:
     password: ${POSTGRES_PASSWORD:smart_city_pass}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     open-in-view: false
     properties:
       hibernate:
+        default_schema: core
         format_sql: true
+  flyway:
+    enabled: true
+    default-schema: core
+    schemas: core
+    create-schemas: true
 
 server:
   port: ${SPRING_SERVICE_PORT:8080}

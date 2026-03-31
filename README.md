@@ -136,6 +136,12 @@ mvn clean test
 mvn clean package
 ```
 
+Database migrations (Flyway):
+
+- Migrations are in `spring-service/src/main/resources/db/migration`.
+- `spring.jpa.hibernate.ddl-auto` is set to `validate`.
+- Start the app and Flyway applies pending migrations automatically.
+
 ## Run FastAPI Service (venv)
 
 From `smart-city-backend/fastapi-service/`:
@@ -147,6 +153,18 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Database migrations (Alembic):
+
+```bash
+alembic upgrade head
+```
+
+Create a new revision:
+
+```bash
+alembic revision -m "describe change"
 ```
 
 ### Windows (Command Prompt)
@@ -199,7 +217,9 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 - `application-local.yml` is intentionally ignored by git for local Spring overrides.
 - Current setup is scaffold-level and ready for feature modules.
-- Recommended next step: add dedicated schemas or separate databases per service as the architecture evolves.
+- Database ownership:
+  - `core` schema is owned by Spring service (Flyway + JPA entities)
+  - `pollution` schema is owned by FastAPI service (Alembic + SQLAlchemy models)
 - If you change `CORS_ALLOWED_ORIGINS`, restart both backend services.
 
 ## CI Expectations
