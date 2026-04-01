@@ -90,6 +90,9 @@ cp .env.example .env
 
 2. Values in `.env` are used by Docker Compose and can also be reused by services.
 
+   - Spring imports `../.env` through `spring.config.import`.
+   - FastAPI loads `../.env` (and `fastapi-service/.env` if present) via `python-dotenv` in `app/core/config.py`.
+
 3. CORS is controlled by `CORS_ALLOWED_ORIGINS` (comma-separated), defaulting to:
 
 - `http://localhost:5173` (Vite dev)
@@ -142,6 +145,15 @@ Database migrations (Flyway):
 - `spring.jpa.hibernate.ddl-auto` is set to `validate`.
 - Start the app and Flyway applies pending migrations automatically.
 
+Authentication endpoints (Spring):
+
+- `GET /api/auth/me` requires a valid Clerk bearer token.
+- On first successful call, Spring auto-provisions `core.user_profiles` if the `clerk_user_id` does not exist.
+- Clerk config env vars used by Spring:
+  - `CLERK_ISSUER_URL`
+  - `CLERK_JWKS_URL`
+  - `CLERK_AUDIENCE` (optional)
+
 ## Run FastAPI Service (venv)
 
 From `smart-city-backend/fastapi-service/`:
@@ -166,6 +178,16 @@ Create a new revision:
 ```bash
 alembic revision -m "describe change"
 ```
+
+Authentication endpoints (FastAPI):
+
+- `GET /api/auth/me` requires a valid Clerk bearer token.
+- FastAPI validates JWT signature/issuer and reads active users from `core.user_profiles`.
+- FastAPI does not auto-provision users; it expects the user to already exist in `core.user_profiles`.
+- Clerk config env vars used by FastAPI:
+  - `CLERK_ISSUER_URL`
+  - `CLERK_JWKS_URL`
+  - `CLERK_AUDIENCE` (optional)
 
 ### Windows (Command Prompt)
 
@@ -220,6 +242,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 - Database ownership:
   - `core` schema is owned by Spring service (Flyway + JPA entities)
   - `pollution` schema is owned by FastAPI service (Alembic + SQLAlchemy models)
+  - FastAPI auth lookup reads from `core.user_profiles`, so both services must point to the same PostgreSQL instance.
 - If you change `CORS_ALLOWED_ORIGINS`, restart both backend services.
 
 ## CI Expectations
