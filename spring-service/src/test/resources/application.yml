@@ -4,6 +4,8 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  flyway:
+    enabled: false
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -12,3 +14,8 @@ spring:
 app:
   cors:
     allowed-origins: http://localhost:5173,http://localhost:5000
+  auth:
+    clerk:
+      issuer-url: https://test-clerk.example
+      jwks-url: https://test-clerk.example/.well-known/jwks.json
+      audience:
