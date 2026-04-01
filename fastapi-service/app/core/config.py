@@ -1,6 +1,15 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+ROOT_DIR = Path(__file__).resolve().parents[3]
+SERVICE_DIR = Path(__file__).resolve().parents[2]
+
+load_dotenv(ROOT_DIR / ".env", override=False)
+load_dotenv(SERVICE_DIR / ".env", override=False)
 
 
 class Settings:
