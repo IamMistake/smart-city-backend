@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find . -name \"*.java\" -type f -exec wc -l {} \\\\;)",
+      "Read(//c/Users/FILIP/Desktop/IKT/smart-city-backend/**)",
+      "Bash(xargs wc:*)",
+      "Bash(mvn clean:*)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Users/FILIP/AppData/**)",
+      "Bash(\"/c/Program Files/JetBrains/IntelliJ IDEA 2025.3.2/plugins/maven/lib/maven3/bin/mvn\" clean test)"
+    ]
+  }
+}
