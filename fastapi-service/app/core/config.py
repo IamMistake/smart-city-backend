@@ -16,6 +16,17 @@ class Settings:
 	service_name: str = "fastapi-service"
 	env: str = os.getenv("FASTAPI_ENV", "development")
 	port: int = int(os.getenv("FASTAPI_SERVICE_PORT", "8000"))
+	pulse_city: str = os.getenv("PULSE_CITY", "skopje").strip().lower()
+	pulse_base_url: str = os.getenv("PULSE_BASE_URL", "").strip()
+	pulse_timeout_seconds: float = float(os.getenv("PULSE_TIMEOUT_SECONDS", "10"))
+	pulse_username: str = os.getenv("PULSE_USERNAME", "").strip()
+	pulse_password: str = os.getenv("PULSE_PASSWORD", "").strip()
+	pollution_startup_fetch: bool = (
+		os.getenv("POLLUTION_STARTUP_FETCH", "true").strip().lower() == "true"
+	)
+	pollution_stale_after_minutes: int = int(
+		os.getenv("POLLUTION_STALE_AFTER_MINUTES", "120")
+	)
 	clerk_issuer_url: str = os.getenv("CLERK_ISSUER_URL", "").strip()
 	clerk_audience: str = os.getenv("CLERK_AUDIENCE", "").strip()
 	clerk_jwks_url: str = os.getenv("CLERK_JWKS_URL", "").strip()
