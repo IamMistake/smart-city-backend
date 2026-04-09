@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from fastapi import HTTPException
 import pytest
+from fastapi import HTTPException
 
 from app.api.routes import pollution
 from app.services.pulse_eco_client import PulseEcoError

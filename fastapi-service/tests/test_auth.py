@@ -1,7 +1,8 @@
-from fastapi import HTTPException, status
 import pytest
+from fastapi import HTTPException, status
 
 from app.core.auth import RoleChecker
+
 
 def test_role_checker_allows_correct_role():
     checker = RoleChecker(allowed_roles=["ADMIN", "OPERATOR"])
