@@ -40,7 +40,7 @@ class FakeRouteService:
 def test_get_current_pollution_returns_payload(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(pollution, "pollution_service", FakeRouteService())
 
-    body = pollution.get_current_pollution(metric="pm10")
+    body = pollution.get_current_pollution(metric="pm10", user={"role": "CITIZEN"})
 
     assert body["metric"] == "pm10"
 
@@ -53,7 +53,7 @@ def test_get_current_pollution_returns_bad_request(monkeypatch: pytest.MonkeyPat
     )
 
     with pytest.raises(HTTPException) as exc:
-        pollution.get_current_pollution(metric="aqi")
+        pollution.get_current_pollution(metric="aqi", user={"role": "CITIZEN"})
 
     assert exc.value.status_code == 400
 
@@ -66,7 +66,7 @@ def test_get_current_pollution_returns_unavailable(monkeypatch: pytest.MonkeyPat
     )
 
     with pytest.raises(HTTPException) as exc:
-        pollution.get_current_pollution(metric="pm10")
+        pollution.get_current_pollution(metric="pm10", user={"role": "CITIZEN"})
 
     assert exc.value.status_code == 503
     assert exc.value.detail["code"] == "POLLUTION_DATA_UNAVAILABLE"
@@ -80,6 +80,7 @@ def test_get_pollution_history_returns_payload(monkeypatch: pytest.MonkeyPatch) 
         window_hours=24,
         bucket_minutes=60,
         sensor_id="1003",
+        user={"role": "ADMIN"}
     )
 
     assert body["metric"] == "pm10"
@@ -101,6 +102,7 @@ def test_get_pollution_history_returns_bad_request(
             window_hours=0,
             bucket_minutes=60,
             sensor_id=None,
+            user={"role": "ADMIN"}
         )
 
     assert exc.value.status_code == 400
@@ -121,6 +123,7 @@ def test_get_pollution_history_returns_unavailable(
             window_hours=24,
             bucket_minutes=60,
             sensor_id=None,
+            user={"role": "ADMIN"}
         )
 
     assert exc.value.status_code == 503

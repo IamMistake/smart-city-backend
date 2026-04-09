@@ -18,9 +18,13 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 	private final String clerkIssuerUrl;
 	private final String clerkJwksUrl;
@@ -54,7 +58,9 @@ public class SecurityConfig {
 			);
 
 		if (clerkConfigured) {
-			configuredHttp.oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
+			configuredHttp.oauth2ResourceServer((oauth2) -> oauth2.jwt(
+				jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+			));
 		}
 
 		return http.build();
@@ -99,6 +105,20 @@ public class SecurityConfig {
 		));
 
 		return decoder;
+	}
+
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+		grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+
+		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+			var authorities = grantedAuthoritiesConverter.convert(jwt);
+			return authorities;
+		});
+		return jwtAuthenticationConverter;
 	}
 
 	private boolean isClerkConfigured() {
