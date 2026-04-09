@@ -11,7 +11,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(schema = "core", name = "incident_status_history")
 public class IncidentStatusHistory extends CreationAwareModel {

@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Data;
 
 @MappedSuperclass
 public abstract class SoftDeleteModel extends CreationAwareModel {

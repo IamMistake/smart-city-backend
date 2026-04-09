@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+@Data
 @Entity
 @Table(schema = "core", name = "incidents")
 public class Incident extends SoftDeleteModel {
