@@ -189,6 +189,15 @@ Authentication endpoints (FastAPI):
   - `CLERK_JWKS_URL`
   - `CLERK_AUDIENCE` (optional)
 
+Pollution endpoint (FastAPI):
+
+- `GET /api/pollution/current?metric=pm10`
+- `GET /api/pollution/history?metric=pm10&windowHours=24&bucketMinutes=60&sensorId=1003`
+- Pulls latest data from Pulse Eco (`/overall` + `/current`) and serves cached data.
+- History uses Pulse Eco `dataRaw` and returns backend-bucketed time series.
+- By default, FastAPI warms the cache on startup (`POLLUTION_STARTUP_FETCH=true`).
+- Supported metric values: `pm10`, `pm25`, `pm1`, `no2`, `o3`, `temperature`, `humidity`, `pressure`, `noise_dba`.
+
 ### Windows (Command Prompt)
 
 ```bat
