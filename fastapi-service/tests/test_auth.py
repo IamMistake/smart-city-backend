@@ -1,5 +1,6 @@
-import pytest
 from fastapi import HTTPException, status
+import pytest
+
 from app.core.auth import RoleChecker
 
 def test_role_checker_allows_correct_role():
