@@ -3,9 +3,9 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Any
 
-import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+import jwt
 from jwt import PyJWKClient
 from jwt.exceptions import PyJWTError
 from sqlalchemy import text
