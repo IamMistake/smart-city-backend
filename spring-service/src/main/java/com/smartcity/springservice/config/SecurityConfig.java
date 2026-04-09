@@ -71,8 +71,15 @@ public class SecurityConfig {
 			clerkIssuerUrl
 		);
 
+		// Add clock skew allowance (e.g., 60 seconds)
+		org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator<Jwt> defaultValidators =
+			new org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator<>(
+				issuerValidator,
+				new org.springframework.security.oauth2.jwt.JwtTimestampValidator(java.time.Duration.ofSeconds(60))
+			);
+
 		if (clerkAudience == null || clerkAudience.isBlank()) {
-			decoder.setJwtValidator(issuerValidator);
+			decoder.setJwtValidator(defaultValidators);
 			return decoder;
 		}
 
@@ -87,7 +94,7 @@ public class SecurityConfig {
 		};
 
 		decoder.setJwtValidator(new org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator<>(
-			issuerValidator,
+			defaultValidators,
 			audienceValidator
 		));
 
