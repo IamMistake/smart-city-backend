@@ -15,6 +15,7 @@ load_dotenv(SERVICE_DIR / ".env", override=False)
 class Settings:
     service_name: str = "fastapi-service"
     env: str = os.getenv("FASTAPI_ENV", "development")
+    demo_mode: bool = os.getenv("FASTAPI_ENV", "development") == "demo"  #adding for demo
     port: int = int(os.getenv("FASTAPI_SERVICE_PORT", "8000"))
     pulse_city: str = os.getenv("PULSE_CITY", "skopje").strip().lower()
     pulse_base_url: str = os.getenv("PULSE_BASE_URL", "").strip()
