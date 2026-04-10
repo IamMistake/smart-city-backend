@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.core.auth import RoleChecker, get_active_user
+from app.core.roles import RoleChecker
 from app.services.pollution_service import PulseEcoError, pollution_service
 
 router = APIRouter(prefix="/api/pollution", tags=["pollution"])
@@ -9,7 +11,7 @@ router = APIRouter(prefix="/api/pollution", tags=["pollution"])
 @router.get("/current")
 def get_current_pollution(
     metric: str = Query(default="pm10", description="Pollution metric"),
-    user: dict = Depends(get_active_user),
+    user: dict = Depends(RoleChecker(["CITIZEN", "OPERATOR", "AUTHORITY", "ADMIN"])),
 ) -> dict:
     try:
         return pollution_service.get_current_snapshot(metric=metric)
@@ -32,7 +34,7 @@ def get_pollution_history(
     window_hours: int = Query(default=24, alias="windowHours"),
     bucket_minutes: int = Query(default=60, alias="bucketMinutes"),
     sensor_id: str | None = Query(default=None, alias="sensorId"),
-    user: dict = Depends(RoleChecker(["ADMIN", "OPERATOR", "AUTHORITY"])),
+    user: dict = Depends(RoleChecker(["OPERATOR", "AUTHORITY", "ADMIN"])),
 ) -> dict:
     try:
         return pollution_service.get_history_snapshot(

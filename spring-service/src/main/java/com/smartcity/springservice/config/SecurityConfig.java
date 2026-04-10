@@ -21,6 +21,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import com.smartcity.springservice.service.CurrentUserService;
+import com.smartcity.springservice.api.dto.AuthenticatedUserResponse;
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -41,7 +46,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
 		boolean clerkConfigured = isClerkConfigured();
 
 		HttpSecurity configuredHttp = http
@@ -59,7 +64,7 @@ public class SecurityConfig {
 
 		if (clerkConfigured) {
 			configuredHttp.oauth2ResourceServer((oauth2) -> oauth2.jwt(
-				jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+				jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)
 			));
 		}
 
@@ -108,15 +113,17 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public JwtAuthenticationConverter jwtAuthenticationConverter() {
-		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-		grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-		grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-
+	public JwtAuthenticationConverter jwtAuthenticationConverter(CurrentUserService currentUserService) {
 		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-			var authorities = grantedAuthoritiesConverter.convert(jwt);
-			return authorities;
+			String clerkUserId = jwt.getSubject();
+			try {
+				AuthenticatedUserResponse user = currentUserService.resolveActiveUser(clerkUserId);
+				return List.of(new SimpleGrantedAuthority("ROLE_" + user.role()));
+			} catch (Exception e) {
+				// Fallback to empty authorities if user not found in DB
+				return Collections.emptyList();
+			}
 		});
 		return jwtAuthenticationConverter;
 	}

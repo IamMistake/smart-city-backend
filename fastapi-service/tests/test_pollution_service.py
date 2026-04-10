@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+
 import pytest
 
 from app.services.pollution_service import PollutionService
@@ -101,6 +103,7 @@ def test_refresh_failure_keeps_cache_and_marks_error() -> None:
     )
 
     service.refresh()
+    time.sleep(0.05)  # Ensure time passes on Windows for stale check (stale_after=0)
     client.should_fail = True
 
     with pytest.raises(PulseEcoError):
@@ -174,6 +177,7 @@ def test_history_snapshot_uses_cached_payload_on_failure() -> None:
         bucket_minutes=60,
         sensor_id="1003",
     )
+    time.sleep(0.05)  # Ensure time passes on Windows for stale check (cache_ttl=0)
     client.should_fail = True
 
     history = service.get_history_snapshot(
