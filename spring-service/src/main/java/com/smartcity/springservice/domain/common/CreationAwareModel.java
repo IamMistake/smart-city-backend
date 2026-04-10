@@ -17,4 +17,8 @@ public abstract class CreationAwareModel extends BaseModel {
 	@UpdateTimestamp
 	@Column(name = "updated_at", nullable = false)
 	private Instant updatedAt;
+
+	public Instant getCreatedAt() { return createdAt; }
+
+	public Instant getUpdatedAt() { return updatedAt; }
 }

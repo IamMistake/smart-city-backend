@@ -27,3 +27,4 @@
 
 # Docker
 postgres-data/
+.claude

@@ -20,8 +20,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(schema = "core", name = "incidents")
 public class Incident extends SoftDeleteModel {
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "reported_by_user_id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reported_by_user_id")
 	private UserProfile reportedByUser;
 
 	@Column(name = "title", nullable = false, length = 255)
@@ -40,12 +40,12 @@ public class Incident extends SoftDeleteModel {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false, length = 16)
-	private IncidentStatus status;
+	private IncidentStatus status = IncidentStatus.ACTIVE;
 
-	@Column(name = "latitude", nullable = false, precision = 9, scale = 6)
+	@Column(name = "latitude", precision = 9, scale = 6)
 	private BigDecimal latitude;
 
-	@Column(name = "longitude", nullable = false, precision = 9, scale = 6)
+	@Column(name = "longitude", precision = 9, scale = 6)
 	private BigDecimal longitude;
 
 	@Column(name = "address", length = 255)
@@ -56,4 +56,22 @@ public class Incident extends SoftDeleteModel {
 
 	@Column(name = "resolved_at")
 	private Instant resolvedAt;
+
+	public String getTitle() { return title; }
+	public void setTitle(String title) { this.title = title; }
+
+	public String getDescription() { return description; }
+	public void setDescription(String description) { this.description = description; }
+
+	public IncidentType getIncidentType() { return incidentType; }
+	public void setIncidentType(IncidentType incidentType) { this.incidentType = incidentType; }
+
+	public PriorityLevel getPriority() { return priority; }
+	public void setPriority(PriorityLevel priority) { this.priority = priority; }
+
+	public IncidentStatus getStatus() { return status; }
+	public void setStatus(IncidentStatus status) { this.status = status; }
+
+	public Instant getResolvedAt() { return resolvedAt; }
+	public void setResolvedAt(Instant resolvedAt) { this.resolvedAt = resolvedAt; }
 }

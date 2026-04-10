@@ -33,4 +33,8 @@ public class IncidentStatusHistory extends CreationAwareModel {
 
 	@Column(name = "note")
 	private String note;
+
+	public void setIncident(Incident incident) { this.incident = incident; }
+	public void setOldStatus(IncidentStatus oldStatus) { this.oldStatus = oldStatus; }
+	public void setNewStatus(IncidentStatus newStatus) { this.newStatus = newStatus; }
 }
