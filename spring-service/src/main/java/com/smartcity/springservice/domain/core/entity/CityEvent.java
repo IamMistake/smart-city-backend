@@ -51,4 +51,15 @@ public class CityEvent extends SoftDeleteModel {
 
 	@Column(name = "end_time")
 	private Instant endTime;
+
+	public void setCreatedByUser(UserProfile user) { this.createdByUser = user; }
+	public void setTitle(String title) { this.title = title; }
+	public void setDescription(String description) { this.description = description; }
+	public void setEventType(EventType eventType) { this.eventType = eventType; }
+	public void setStatus(EventStatus status) { this.status = status; }
+	public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
+	public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
+	public void setAddress(String address) { this.address = address; }
+	public void setStartTime(Instant startTime) { this.startTime = startTime; }
+	public void setEndTime(Instant endTime) { this.endTime = endTime; }
 }

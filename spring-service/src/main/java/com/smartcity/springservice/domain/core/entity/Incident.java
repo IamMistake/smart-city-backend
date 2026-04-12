@@ -74,4 +74,10 @@ public class Incident extends SoftDeleteModel {
 
 	public Instant getResolvedAt() { return resolvedAt; }
 	public void setResolvedAt(Instant resolvedAt) { this.resolvedAt = resolvedAt; }
+
+	public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
+	public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
+	public void setOccurredAt(Instant occurredAt) { this.occurredAt = occurredAt; }
+	public void setAddress(String address) { this.address = address; }
+	public void setReportedByUser(UserProfile user) { this.reportedByUser = user; }
 }

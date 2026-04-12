@@ -33,4 +33,10 @@ public class EventStatusHistory extends CreationAwareModel {
 
 	@Column(name = "note")
 	private String note;
+
+	public void setEvent(CityEvent event) { this.event = event; }
+	public void setChangedByUser(UserProfile user) { this.changedByUser = user; }
+	public void setOldStatus(EventStatus oldStatus) { this.oldStatus = oldStatus; }
+	public void setNewStatus(EventStatus newStatus) { this.newStatus = newStatus; }
+	public void setNote(String note) { this.note = note; }
 }
