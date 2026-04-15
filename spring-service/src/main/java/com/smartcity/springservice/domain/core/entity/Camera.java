@@ -11,7 +11,11 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(
 	schema = "core",
@@ -43,11 +47,4 @@ public class Camera extends SoftDeleteModel {
 	@Column(name = "stream_url")
 	private String streamUrl;
 
-	public void setName(String name) { this.name = name; }
-	public void setProvider(String provider) { this.provider = provider; }
-	public void setExternalCameraId(String externalCameraId) { this.externalCameraId = externalCameraId; }
-	public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
-	public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
-	public void setStatus(CameraStatus status) { this.status = status; }
-	public void setStreamUrl(String streamUrl) { this.streamUrl = streamUrl; }
 }

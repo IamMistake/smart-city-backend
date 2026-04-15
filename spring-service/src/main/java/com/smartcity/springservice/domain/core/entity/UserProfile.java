@@ -8,7 +8,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(schema = "core", name = "user_profiles")
 public class UserProfile extends SoftDeleteModel {
@@ -31,10 +35,4 @@ public class UserProfile extends SoftDeleteModel {
 	@Column(name = "is_active", nullable = false)
 	private boolean isActive = true;
 
-	public void setClerkUserId(String id) { this.clerkUserId = id; }
-	public void setEmail(String email) { this.email = email; }
-	public void setFullName(String name) { this.fullName = name; }
-	public void setRole(UserRole role) { this.role = role; }
-	public void setAvatarUrl(String url) { this.avatarUrl = url; }
-	public void setActive(boolean active) { this.isActive = active; }
 }

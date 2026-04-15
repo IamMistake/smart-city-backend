@@ -11,11 +11,16 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(schema = "core", name = "incident_status_history")
 public class IncidentStatusHistory extends CreationAwareModel {
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@Setter
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "incident_id", nullable = false)
 	private Incident incident;
 
@@ -23,18 +28,17 @@ public class IncidentStatusHistory extends CreationAwareModel {
 	@JoinColumn(name = "changed_by_user_id")
 	private UserProfile changedByUser;
 
-	@Enumerated(EnumType.STRING)
+	@Setter
+    @Enumerated(EnumType.STRING)
 	@Column(name = "old_status", length = 16)
 	private IncidentStatus oldStatus;
 
-	@Enumerated(EnumType.STRING)
+	@Setter
+    @Enumerated(EnumType.STRING)
 	@Column(name = "new_status", nullable = false, length = 16)
 	private IncidentStatus newStatus;
 
 	@Column(name = "note")
 	private String note;
 
-	public void setIncident(Incident incident) { this.incident = incident; }
-	public void setOldStatus(IncidentStatus oldStatus) { this.oldStatus = oldStatus; }
-	public void setNewStatus(IncidentStatus newStatus) { this.newStatus = newStatus; }
 }

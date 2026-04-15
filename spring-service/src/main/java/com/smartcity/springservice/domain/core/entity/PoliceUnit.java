@@ -11,7 +11,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(schema = "core", name = "police_units")
 public class PoliceUnit extends SoftDeleteModel {
@@ -34,10 +38,4 @@ public class PoliceUnit extends SoftDeleteModel {
 	@Column(name = "last_reported_at")
 	private Instant lastReportedAt;
 
-	public void setUnitCode(String unitCode) { this.unitCode = unitCode; }
-	public void setDisplayName(String displayName) { this.displayName = displayName; }
-	public void setStatus(PoliceUnitStatus status) { this.status = status; }
-	public void setCurrentLatitude(BigDecimal lat) { this.currentLatitude = lat; }
-	public void setCurrentLongitude(BigDecimal lon) { this.currentLongitude = lon; }
-	public void setLastReportedAt(Instant time) { this.lastReportedAt = time; }
 }
