@@ -11,7 +11,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(schema = "core", name = "police_units")
 public class PoliceUnit extends SoftDeleteModel {
@@ -33,4 +37,5 @@ public class PoliceUnit extends SoftDeleteModel {
 
 	@Column(name = "last_reported_at")
 	private Instant lastReportedAt;
+
 }

@@ -15,7 +15,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+
+@Getter
+@Setter
 @Entity
 @Table(schema = "core", name = "events")
 public class CityEvent extends SoftDeleteModel {
@@ -51,4 +56,5 @@ public class CityEvent extends SoftDeleteModel {
 
 	@Column(name = "end_time")
 	private Instant endTime;
+
 }
