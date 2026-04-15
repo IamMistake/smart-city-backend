@@ -28,30 +28,20 @@ public class Incident extends SoftDeleteModel {
 	@JoinColumn(name = "reported_by_user_id")
 	private UserProfile reportedByUser;
 
-	@Setter
-    @Getter
     @Column(name = "title", nullable = false, length = 255)
 	private String title;
 
-	@Setter
-    @Getter
     @Column(name = "description")
 	private String description;
 
-	@Setter
-    @Getter
     @Enumerated(EnumType.STRING)
 	@Column(name = "incident_type", nullable = false, length = 32)
 	private IncidentType incidentType;
 
-	@Setter
-    @Getter
     @Enumerated(EnumType.STRING)
 	@Column(name = "priority", nullable = false, length = 16)
 	private PriorityLevel priority;
 
-	@Setter
-    @Getter
     @Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false, length = 16)
 	private IncidentStatus status = IncidentStatus.ACTIVE;
@@ -68,8 +58,6 @@ public class Incident extends SoftDeleteModel {
 	@Column(name = "occurred_at")
 	private Instant occurredAt;
 
-	@Setter
-    @Getter
     @Column(name = "resolved_at")
 	private Instant resolvedAt;
 

@@ -19,7 +19,7 @@ import lombok.Setter;
 @Entity
 @Table(schema = "core", name = "incident_status_history")
 public class IncidentStatusHistory extends CreationAwareModel {
-	@Setter
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "incident_id", nullable = false)
 	private Incident incident;
@@ -28,12 +28,10 @@ public class IncidentStatusHistory extends CreationAwareModel {
 	@JoinColumn(name = "changed_by_user_id")
 	private UserProfile changedByUser;
 
-	@Setter
     @Enumerated(EnumType.STRING)
 	@Column(name = "old_status", length = 16)
 	private IncidentStatus oldStatus;
 
-	@Setter
     @Enumerated(EnumType.STRING)
 	@Column(name = "new_status", nullable = false, length = 16)
 	private IncidentStatus newStatus;
