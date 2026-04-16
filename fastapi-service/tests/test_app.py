@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from app.api.routes import health
 from app.core.auth import get_active_user
 from app.main import app, root
+from app.security.role_guard import RoleGuard
 
 
 def test_root_endpoint() -> None:
@@ -15,7 +16,7 @@ def test_root_endpoint() -> None:
 def test_health_endpoint_reports_up(monkeypatch) -> None:
 	monkeypatch.setattr(health, "check_db_connection", lambda: (True, None))
 
-	body = health.get_health()
+	body = health.get_health(role_guard=RoleGuard("CITIZEN"))
 
 	assert body["status"] == "UP"
 	assert body["db_status"] == "UP"
@@ -27,7 +28,7 @@ def test_health_endpoint_reports_up(monkeypatch) -> None:
 def test_health_endpoint_reports_down(monkeypatch) -> None:
 	monkeypatch.setattr(health, "check_db_connection", lambda: (False, "database offline"))
 
-	body = health.get_health()
+	body = health.get_health(role_guard=RoleGuard("OPERATOR"))
 
 	assert body["status"] == "DOWN"
 	assert body["db_status"] == "DOWN"

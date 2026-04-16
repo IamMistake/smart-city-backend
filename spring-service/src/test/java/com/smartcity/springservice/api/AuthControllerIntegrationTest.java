@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.smartcity.springservice.api.dto.AuthenticatedUserResponse;
+import com.smartcity.springservice.domain.core.enums.UserRole;
 import com.smartcity.springservice.service.CurrentUserService;
 
 @SpringBootTest
@@ -46,7 +47,7 @@ class AuthControllerIntegrationTest {
 			"user_test_123",
 			"user@example.com",
 			"Test User",
-			"CITIZEN",
+			UserRole.CITIZEN,
 			"https://example.com/avatar.png",
 			true
 		);

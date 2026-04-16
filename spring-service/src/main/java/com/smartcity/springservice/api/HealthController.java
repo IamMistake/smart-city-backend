@@ -3,6 +3,7 @@ package com.smartcity.springservice.api;
 import java.time.Instant;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,13 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthController {
 
 	@GetMapping("/")
+	@PreAuthorize("@roleGuard.userHasAnyRole('CITIZEN', 'ADMIN')")
 	public ResponseEntity<Map<String, Object>> health() {
 		return ResponseEntity.ok(
-			Map.of(
-				"status", "UP",
-				"service", "spring-service",
-				"timestamp", Instant.now().toString()
-			)
+				Map.of(
+						"status", "UP",
+						"service", "spring-service",
+						"timestamp", Instant.now().toString()
+				)
 		);
 	}
 }

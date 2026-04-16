@@ -22,32 +22,32 @@ public class CurrentUserService {
 
 	public AuthenticatedUserResponse resolveActiveUser(String clerkUserId) {
 		AuthenticatedUserResponse user = jdbcTemplate.query(
-			"""
-			SELECT
-				id,
-				clerk_user_id,
-				email,
-				full_name,
-				role,
-				avatar_url,
-				is_active
-			FROM core.user_profiles
-			WHERE clerk_user_id = :clerkUserId
-				AND deleted_at IS NULL
-			LIMIT 1
-			""",
-			Map.of("clerkUserId", clerkUserId),
-			(rs, rowNum) -> new AuthenticatedUserResponse(
-				(UUID) rs.getObject("id"),
-				rs.getString("clerk_user_id"),
-				rs.getString("email"),
-				rs.getString("full_name"),
-				rs.getString("role"),
-				rs.getString("avatar_url"),
-				rs.getBoolean("is_active")
-			)
+				"""
+                SELECT
+                    id,
+                    clerk_user_id,
+                    email,
+                    full_name,
+                    role,
+                    avatar_url,
+                    is_active
+                FROM core.user_profiles
+                WHERE clerk_user_id = :clerkUserId
+                    AND deleted_at IS NULL
+                LIMIT 1
+                """,
+				Map.of("clerkUserId", clerkUserId),
+				(rs, rowNum) -> new AuthenticatedUserResponse(
+						(UUID) rs.getObject("id"),
+						rs.getString("clerk_user_id"),
+						rs.getString("email"),
+						rs.getString("full_name"),
+						UserRole.valueOf(rs.getString("role")),
+						rs.getString("avatar_url"),
+						rs.getBoolean("is_active")
+				)
 		).stream().findFirst().orElseThrow(() ->
-			new ResponseStatusException(HttpStatus.FORBIDDEN, "User profile not found")
+				new ResponseStatusException(HttpStatus.FORBIDDEN, "User profile not found")
 		);
 
 		if (!user.isActive()) {
@@ -58,10 +58,10 @@ public class CurrentUserService {
 	}
 
 	public void provisionUserIfMissing(
-		String clerkUserId,
-		String email,
-		String fullName,
-		String avatarUrl
+			String clerkUserId,
+			String email,
+			String fullName,
+			String avatarUrl
 	) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("clerkUserId", clerkUserId);
@@ -71,31 +71,31 @@ public class CurrentUserService {
 		parameters.put("avatarUrl", avatarUrl);
 
 		jdbcTemplate.update(
-			"""
-			INSERT INTO core.user_profiles (
-				clerk_user_id,
-				email,
-				full_name,
-				role,
-				avatar_url,
-				is_active
-			)
-			VALUES (
-				:clerkUserId,
-				:email,
-				:fullName,
-				CAST(:role AS core.user_role),
-				:avatarUrl,
-				TRUE
-			)
-			ON CONFLICT (clerk_user_id) DO UPDATE
-			SET
-				email = EXCLUDED.email,
-				full_name = EXCLUDED.full_name,
-				avatar_url = EXCLUDED.avatar_url,
-				deleted_at = NULL
-			""",
-			parameters
+				"""
+                INSERT INTO core.user_profiles (
+                    clerk_user_id,
+                    email,
+                    full_name,
+                    role,
+                    avatar_url,
+                    is_active
+                )
+                VALUES (
+                    :clerkUserId,
+                    :email,
+                    :fullName,
+                    CAST(:role AS core.user_role),
+                    :avatarUrl,
+                    TRUE
+                )
+                ON CONFLICT (clerk_user_id) DO UPDATE
+                SET
+                    email = EXCLUDED.email,
+                    full_name = EXCLUDED.full_name,
+                    avatar_url = EXCLUDED.avatar_url,
+                    deleted_at = NULL
+                """,
+				parameters
 		);
 	}
 }
