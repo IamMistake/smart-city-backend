@@ -16,8 +16,7 @@ def test_root_endpoint() -> None:
 def test_health_endpoint_reports_up(monkeypatch) -> None:
 	monkeypatch.setattr(health, "check_db_connection", lambda: (True, None))
 
-	# Passing a RoleGuard with ADMIN role so it passes the check
-	body = health.get_health(role_guard=RoleGuard("ADMIN"))
+	body = health.get_health(role_guard=RoleGuard("CITIZEN"))
 
 	assert body["status"] == "UP"
 	assert body["db_status"] == "UP"
@@ -29,7 +28,7 @@ def test_health_endpoint_reports_up(monkeypatch) -> None:
 def test_health_endpoint_reports_down(monkeypatch) -> None:
 	monkeypatch.setattr(health, "check_db_connection", lambda: (False, "database offline"))
 
-	body = health.get_health(role_guard=RoleGuard("ADMIN"))
+	body = health.get_health(role_guard=RoleGuard("OPERATOR"))
 
 	assert body["status"] == "DOWN"
 	assert body["db_status"] == "DOWN"

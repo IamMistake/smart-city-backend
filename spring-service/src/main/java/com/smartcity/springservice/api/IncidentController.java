@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,39 +26,35 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/incidents")
 public class IncidentController {
-    private final IncidentService incidentService;
+	private final IncidentService incidentService;
 
-    public IncidentController(IncidentService incidentService) {
-        this.incidentService = incidentService;
-    }
+	public IncidentController(IncidentService incidentService) {
+		this.incidentService = incidentService;
+	}
 
-    @PreAuthorize("@privilegeGuard.canModifyIncidents()")
-    @PostMapping
-    public ResponseEntity<IncidentResponse> createIncident(@Valid @RequestBody IncidentRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.createIncident(request));
-    }
+	@PostMapping
+	public ResponseEntity<IncidentResponse> createIncident(@Valid @RequestBody IncidentRequest request) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(incidentService.createIncident(request));
+	}
 
-    @PreAuthorize("@privilegeGuard.canViewIncidents()")
-    @GetMapping
-    public ResponseEntity<List<IncidentResponse>> listIncidents(
-            @RequestParam(required = false) IncidentStatus status,
-            @RequestParam(required = false) PriorityLevel priority
-    ) {
-        return ResponseEntity.ok(incidentService.listIncidents(status, priority));
-    }
+	@GetMapping
+	public ResponseEntity<List<IncidentResponse>> listIncidents(
+		@RequestParam(required = false) IncidentStatus status,
+		@RequestParam(required = false) PriorityLevel priority
+	) {
+		return ResponseEntity.ok(incidentService.listIncidents(status, priority));
+	}
 
-    @PreAuthorize("@privilegeGuard.canViewIncidents()")
-    @GetMapping("/{id}")
-    public ResponseEntity<IncidentResponse> getIncident(@PathVariable UUID id) {
-        return ResponseEntity.ok(incidentService.getIncident(id));
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<IncidentResponse> getIncident(@PathVariable UUID id) {
+		return ResponseEntity.ok(incidentService.getIncident(id));
+	}
 
-    @PreAuthorize("@privilegeGuard.canModifyIncidents()")
-    @PatchMapping("/{id}")
-    public ResponseEntity<IncidentResponse> updateIncident(
-            @PathVariable UUID id,
-            @RequestBody IncidentUpdateRequest request
-    ) {
-        return ResponseEntity.ok(incidentService.updateIncident(id, request));
-    }
+	@PatchMapping("/{id}")
+	public ResponseEntity<IncidentResponse> updateIncident(
+		@PathVariable UUID id,
+		@RequestBody IncidentUpdateRequest request
+	) {
+		return ResponseEntity.ok(incidentService.updateIncident(id, request));
+	}
 }

@@ -2,26 +2,21 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 
 from app.core.config import settings
 from app.db.session import check_db_connection
 from app.security.role_guard import RoleGuard
-from app.security.role_guard_dep import get_role_guard
+from app.security.role_guard_dep import require_any_role
 
 router = APIRouter(prefix="/api/health", tags=["health"])
+ALLOWED_ROLES = ("CITIZEN", "OPERATOR", "AUTHORITY", "ADMIN")
 
 
 @router.get("/")
 def get_health(
-        role_guard: RoleGuard = Depends(get_role_guard),
+    role_guard: RoleGuard = Depends(require_any_role(*ALLOWED_ROLES)),
 ) -> dict[str, str]:
-    if not role_guard.user_has_any_role("ADMIN", "OPERATOR"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not allowed",
-        )
-
     is_connected, error = check_db_connection()
     status_value = "UP" if is_connected else "DOWN"
     db_status = "UP" if is_connected else "DOWN"
