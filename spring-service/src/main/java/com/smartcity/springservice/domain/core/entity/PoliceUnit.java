@@ -26,7 +26,8 @@ public class PoliceUnit extends SoftDeleteModel {
 	private String displayName;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false, length = 16)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "status", nullable = false)
 	private PoliceUnitStatus status;
 
 	@Column(name = "current_latitude", precision = 9, scale = 6)

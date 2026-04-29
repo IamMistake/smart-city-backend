@@ -28,11 +28,13 @@ public class EventStatusHistory extends CreationAwareModel {
 	private UserProfile changedByUser;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "old_status", length = 16)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "old_status")
 	private EventStatus oldStatus;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "new_status", nullable = false, length = 16)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "new_status", nullable = false)
 	private EventStatus newStatus;
 
 	@Column(name = "note")

@@ -26,7 +26,8 @@ public class UserProfile extends SoftDeleteModel {
 	private String fullName;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "role", nullable = false, length = 32)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "role", nullable = false)
 	private UserRole role;
 
 	@Column(name = "avatar_url")

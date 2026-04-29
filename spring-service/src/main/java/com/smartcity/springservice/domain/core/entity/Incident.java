@@ -34,16 +34,19 @@ public class Incident extends SoftDeleteModel {
     @Column(name = "description")
 	private String description;
 
-    @Enumerated(EnumType.STRING)
-	@Column(name = "incident_type", nullable = false, length = 32)
+	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "incident_type", nullable = false)
 	private IncidentType incidentType;
 
-    @Enumerated(EnumType.STRING)
-	@Column(name = "priority", nullable = false, length = 16)
+	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "priority", nullable = false)
 	private PriorityLevel priority;
 
-    @Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false, length = 16)
+	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "status", nullable = false)
 	private IncidentStatus status = IncidentStatus.ACTIVE;
 
 	@Column(name = "latitude", precision = 9, scale = 6)
