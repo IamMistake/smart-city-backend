@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -37,6 +38,18 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	@Order(1)
+	public SecurityFilterChain healthSecurityFilterChain(HttpSecurity http) throws Exception {
+		return http
+			.securityMatcher("/api/health/**")
+			.cors(Customizer.withDefaults())
+			.csrf((csrf) -> csrf.disable())
+			.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll())
+			.build();
+	}
+
+	@Bean
+	@Order(2)
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		boolean clerkConfigured = isClerkConfigured();
 
@@ -45,7 +58,6 @@ public class SecurityConfig {
 			.csrf((csrf) -> csrf.disable())
 			.authorizeHttpRequests((auth) -> auth
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-				.requestMatchers("/api/health/**").permitAll()
 				.requestMatchers("/api/auth/**", "/api/incidents/**").authenticated()
 				.anyRequest().permitAll()
 			);

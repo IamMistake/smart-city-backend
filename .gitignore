@@ -4,6 +4,7 @@
 .vscode/
 **/.project
 **/.classpath
+**/.factorypath
 **/.settings/
 
 # Env files
