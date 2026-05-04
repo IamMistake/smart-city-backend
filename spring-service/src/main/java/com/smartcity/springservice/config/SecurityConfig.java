@@ -5,10 +5,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -21,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 	private final String clerkIssuerUrl;
 	private final String clerkJwksUrl;
@@ -46,10 +46,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests((auth) -> auth
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.requestMatchers("/api/health/**").permitAll()
-				.requestMatchers("/api/auth/**").access((authentication, context) ->
-					new org.springframework.security.authorization.AuthorizationDecision(clerkConfigured
-						&& isAuthenticated(authentication.get()))
-				)
+				.requestMatchers("/api/auth/**", "/api/incidents/**").authenticated()
 				.anyRequest().permitAll()
 			);
 
@@ -57,7 +54,7 @@ public class SecurityConfig {
 			configuredHttp.oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
 		}
 
-		return http.build();
+		return configuredHttp.build();
 	}
 
 	@Bean
@@ -99,11 +96,5 @@ public class SecurityConfig {
 			&& !clerkIssuerUrl.isBlank()
 			&& clerkJwksUrl != null
 			&& !clerkJwksUrl.isBlank();
-	}
-
-	private boolean isAuthenticated(Authentication authentication) {
-		return authentication != null
-			&& authentication.isAuthenticated()
-			&& !(authentication instanceof AnonymousAuthenticationToken);
 	}
 }
