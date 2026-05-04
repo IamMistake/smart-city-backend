@@ -28,12 +28,14 @@ public class IncidentStatusHistory extends CreationAwareModel {
 	@JoinColumn(name = "changed_by_user_id")
 	private UserProfile changedByUser;
 
-    @Enumerated(EnumType.STRING)
-	@Column(name = "old_status", length = 16)
+	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "old_status")
 	private IncidentStatus oldStatus;
 
-    @Enumerated(EnumType.STRING)
-	@Column(name = "new_status", nullable = false, length = 16)
+	@Enumerated(EnumType.STRING)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "new_status", nullable = false)
 	private IncidentStatus newStatus;
 
 	@Column(name = "note")

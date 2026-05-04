@@ -35,11 +35,13 @@ public class CityEvent extends SoftDeleteModel {
 	private String description;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "event_type", nullable = false, length = 32)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "event_type", nullable = false)
 	private EventType eventType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false, length = 16)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "status", nullable = false)
 	private EventStatus status;
 
 	@Column(name = "latitude", nullable = false, precision = 9, scale = 6)

@@ -41,7 +41,8 @@ public class Camera extends SoftDeleteModel {
 	private BigDecimal longitude;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false, length = 16)
+	@org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.NAMED_ENUM)
+	@Column(name = "status", nullable = false)
 	private CameraStatus status;
 
 	@Column(name = "stream_url")

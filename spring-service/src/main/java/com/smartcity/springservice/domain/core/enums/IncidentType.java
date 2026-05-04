@@ -5,6 +5,7 @@ public enum IncidentType {
 	ACCIDENT,
 	PROTEST,
 	POLLUTION,
+	NOISE_POLLUTION,
 	POLICE_ACTIVITY,
 	OTHER,
 }
