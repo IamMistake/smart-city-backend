@@ -20,8 +20,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(schema = "core", name = "incidents")
 public class Incident extends SoftDeleteModel {
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "reported_by_user_id")
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "reported_by_user_id", nullable = false)
 	private UserProfile reportedByUser;
 
     @Column(name = "title", nullable = false, length = 255)
@@ -45,10 +45,10 @@ public class Incident extends SoftDeleteModel {
 	@Column(name = "status", nullable = false)
 	private IncidentStatus status = IncidentStatus.ACTIVE;
 
-	@Column(name = "latitude", precision = 9, scale = 6)
+	@Column(name = "latitude", nullable = false, precision = 9, scale = 6)
 	private BigDecimal latitude;
 
-	@Column(name = "longitude", precision = 9, scale = 6)
+	@Column(name = "longitude", nullable = false, precision = 9, scale = 6)
 	private BigDecimal longitude;
 
 	@Column(name = "address", length = 255)

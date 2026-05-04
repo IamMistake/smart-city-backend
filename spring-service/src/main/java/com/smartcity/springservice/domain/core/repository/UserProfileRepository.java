@@ -9,4 +9,6 @@ import com.smartcity.springservice.domain.core.entity.UserProfile;
 
 public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> {
     Optional<UserProfile> findByEmail(String email);
+
+	Optional<UserProfile> findByClerkUserIdAndDeletedAtIsNull(String clerkUserId);
 }

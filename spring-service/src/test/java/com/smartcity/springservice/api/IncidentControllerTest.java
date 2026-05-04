@@ -58,7 +58,7 @@ class IncidentControllerTest {
 		mockMvc.perform(post("/api/incidents")
 				.with(authenticatedAs(UserRole.CITIZEN))
 				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"title\":\"Power outage\",\"priority\":\"HIGH\",\"type\":\"OTHER\"}"))
+				.content("{\"title\":\"Power outage\",\"priority\":\"HIGH\",\"type\":\"OTHER\",\"latitude\":41.9981,\"longitude\":21.4254}"))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.title").value("Power outage"))
 			.andExpect(jsonPath("$.status").value("ACTIVE"));
@@ -69,7 +69,16 @@ class IncidentControllerTest {
 		mockMvc.perform(post("/api/incidents")
 				.with(authenticatedAs(UserRole.CITIZEN))
 				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"priority\":\"HIGH\",\"type\":\"OTHER\"}"))
+				.content("{\"priority\":\"HIGH\",\"type\":\"OTHER\",\"latitude\":41.9981,\"longitude\":21.4254}"))
+			.andExpect(status().isUnprocessableEntity());
+	}
+
+	@Test
+	void createIncident_missingLatitude_returns422() throws Exception {
+		mockMvc.perform(post("/api/incidents")
+				.with(authenticatedAs(UserRole.CITIZEN))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"title\":\"Power outage\",\"priority\":\"HIGH\",\"type\":\"OTHER\",\"longitude\":21.4254}"))
 			.andExpect(status().isUnprocessableEntity());
 	}
 
