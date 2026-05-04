@@ -16,11 +16,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Entity
 @Table(schema = "core", name = "incidents")
 public class Incident extends SoftDeleteModel {
@@ -61,7 +57,50 @@ public class Incident extends SoftDeleteModel {
 	@Column(name = "occurred_at")
 	private Instant occurredAt;
 
-    @Column(name = "resolved_at")
+	@Column(name = "resolved_at")
 	private Instant resolvedAt;
 
+	public UserProfile getReportedByUser() { return reportedByUser; }
+
+	public void setReportedByUser(UserProfile reportedByUser) { this.reportedByUser = reportedByUser; }
+
+	public String getTitle() { return title; }
+
+	public void setTitle(String title) { this.title = title; }
+
+	public String getDescription() { return description; }
+
+	public void setDescription(String description) { this.description = description; }
+
+	public IncidentType getIncidentType() { return incidentType; }
+
+	public void setIncidentType(IncidentType incidentType) { this.incidentType = incidentType; }
+
+	public PriorityLevel getPriority() { return priority; }
+
+	public void setPriority(PriorityLevel priority) { this.priority = priority; }
+
+	public IncidentStatus getStatus() { return status; }
+
+	public void setStatus(IncidentStatus status) { this.status = status; }
+
+	public BigDecimal getLatitude() { return latitude; }
+
+	public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
+
+	public BigDecimal getLongitude() { return longitude; }
+
+	public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
+
+	public String getAddress() { return address; }
+
+	public void setAddress(String address) { this.address = address; }
+
+	public Instant getOccurredAt() { return occurredAt; }
+
+	public void setOccurredAt(Instant occurredAt) { this.occurredAt = occurredAt; }
+
+	public Instant getResolvedAt() { return resolvedAt; }
+
+	public void setResolvedAt(Instant resolvedAt) { this.resolvedAt = resolvedAt; }
 }

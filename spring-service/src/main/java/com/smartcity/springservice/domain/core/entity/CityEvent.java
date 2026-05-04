@@ -15,12 +15,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
 
 
-@Getter
-@Setter
 @Entity
 @Table(schema = "core", name = "events")
 public class CityEvent extends SoftDeleteModel {
@@ -59,4 +55,43 @@ public class CityEvent extends SoftDeleteModel {
 	@Column(name = "end_time")
 	private Instant endTime;
 
+	public UserProfile getCreatedByUser() { return createdByUser; }
+
+	public void setCreatedByUser(UserProfile createdByUser) { this.createdByUser = createdByUser; }
+
+	public String getTitle() { return title; }
+
+	public void setTitle(String title) { this.title = title; }
+
+	public String getDescription() { return description; }
+
+	public void setDescription(String description) { this.description = description; }
+
+	public EventType getEventType() { return eventType; }
+
+	public void setEventType(EventType eventType) { this.eventType = eventType; }
+
+	public EventStatus getStatus() { return status; }
+
+	public void setStatus(EventStatus status) { this.status = status; }
+
+	public BigDecimal getLatitude() { return latitude; }
+
+	public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
+
+	public BigDecimal getLongitude() { return longitude; }
+
+	public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
+
+	public String getAddress() { return address; }
+
+	public void setAddress(String address) { this.address = address; }
+
+	public Instant getStartTime() { return startTime; }
+
+	public void setStartTime(Instant startTime) { this.startTime = startTime; }
+
+	public Instant getEndTime() { return endTime; }
+
+	public void setEndTime(Instant endTime) { this.endTime = endTime; }
 }

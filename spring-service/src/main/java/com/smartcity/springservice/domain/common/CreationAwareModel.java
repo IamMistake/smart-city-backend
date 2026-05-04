@@ -2,16 +2,12 @@ package com.smartcity.springservice.domain.common;
 
 import java.time.Instant;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
-@Getter
-@Setter
 @MappedSuperclass
 public abstract class CreationAwareModel extends BaseModel {
 	@CreationTimestamp
@@ -25,4 +21,8 @@ public abstract class CreationAwareModel extends BaseModel {
 	public Instant getCreatedAt() { return createdAt; }
 
 	public Instant getUpdatedAt() { return updatedAt; }
+
+	public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+	public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }
