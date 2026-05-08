@@ -3,19 +3,17 @@ from __future__ import annotations
 import logging
 import os
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes.auth import router as auth_router
+from app.api.routes.chat import router as chat_router
 from app.api.routes.health import router as health_router
 from app.api.routes.pollution import router as pollution_router
-from app.api.routes.chat import router as chat_router
-
 from app.core.config import settings
 from app.db.session import check_db_connection
 from app.services.pollution_service import pollution_service
-
-from dotenv import load_dotenv
 
 load_dotenv()
 
