@@ -198,6 +198,27 @@ Pollution endpoint (FastAPI):
 - By default, FastAPI warms the cache on startup (`POLLUTION_STARTUP_FETCH=true`).
 - Supported metric values: `pm10`, `pm25`, `pm1`, `no2`, `o3`, `temperature`, `humidity`, `pressure`, `noise_dba`.
 
+Chatbot endpoint (FastAPI):
+
+- `GET /api/chatbot/models`
+- `POST /api/chatbot/messages`
+- Uses free-model providers configured through env vars.
+- Supported providers in this repo:
+  - `ollama` for local models
+  - `openrouter` for free hosted models
+- Default selection comes from:
+  - `CHATBOT_PRIMARY_PROVIDER`
+  - `CHATBOT_PRIMARY_MODEL`
+- Optional fallback comes from:
+  - `CHATBOT_FALLBACK_PROVIDER`
+  - `CHATBOT_FALLBACK_MODEL`
+- Provider-specific env vars:
+  - `CHATBOT_OLLAMA_BASE_URL`
+  - `CHATBOT_OPENROUTER_BASE_URL`
+  - `CHATBOT_OPENROUTER_API_KEY`
+  - `CHATBOT_OPENROUTER_SITE_URL`
+  - `CHATBOT_OPENROUTER_SITE_NAME`
+
 ### Windows (Command Prompt)
 
 ```bat

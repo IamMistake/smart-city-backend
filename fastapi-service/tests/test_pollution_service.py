@@ -11,6 +11,7 @@ from app.services.pulse_eco_client import PulseEcoError
 class FakePulseClient:
     def __init__(self) -> None:
         self.should_fail = False
+        self.last_history_sensor_id: str | None = None
 
     def fetch_overall(self) -> dict:
         if self.should_fail:
@@ -52,20 +53,22 @@ class FakePulseClient:
         metric: str,
         from_iso: str,
         to_iso: str,
-        sensor_id: str = "-1",
+        sensor_id: str | None = None,
     ) -> list[dict]:
         if self.should_fail:
             raise PulseEcoError("upstream unavailable")
 
+        self.last_history_sensor_id = sensor_id
+
         return [
             {
-                "sensorId": sensor_id,
+                "sensorId": sensor_id or "all-sensors",
                 "type": metric,
                 "stamp": "2026-04-02T08:05:00Z",
                 "value": "7",
             },
             {
-                "sensorId": sensor_id,
+                "sensorId": sensor_id or "all-sensors",
                 "type": metric,
                 "stamp": "2026-04-02T08:35:00Z",
                 "value": "9",
@@ -145,8 +148,9 @@ def test_get_current_snapshot_rejects_unknown_metric() -> None:
 
 
 def test_history_snapshot_returns_bucketed_series() -> None:
+    client = FakePulseClient()
     service = PollutionService(
-        client=FakePulseClient(),
+        client=client,
         city="skopje",
         stale_after_minutes=120,
         history_cache_ttl_minutes=15,
@@ -163,6 +167,7 @@ def test_history_snapshot_returns_bucketed_series() -> None:
     assert history["bucketMinutes"] == 60
     assert len(history["series"]) > 1
     assert all("at" in point and "value" in point for point in history["series"])
+    assert client.last_history_sensor_id is None
 
 
 def test_history_snapshot_uses_cached_payload_on_failure() -> None:

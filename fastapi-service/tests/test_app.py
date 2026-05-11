@@ -5,11 +5,12 @@ import inspect
 import pytest
 from fastapi import HTTPException
 
-from app.api.routes import auth, health, pollution
+from app.api.routes import auth, chatbot, health, pollution
 from app.core.auth import get_clerk_claims
 from app.main import root
 from app.security.role_guard import RoleGuard
 from app.security.role_guard_dep import require_any_role
+from app.services.chatbot_providers import ChatbotProviderError
 
 
 def test_root_endpoint() -> None:
@@ -90,3 +91,61 @@ def test_pollution_route_allows_citizen_role(monkeypatch) -> None:
 	response = pollution.get_current_pollution(metric="pm10", _role_guard=role_guard)
 
 	assert response == {"metric": "pm10", "status": "ok"}
+
+
+def test_chatbot_models_route_allows_citizen_role(monkeypatch) -> None:
+	monkeypatch.setattr(
+		chatbot.chatbot_service,
+		"list_models",
+		lambda: {"models": [{"id": "ollama:llama3.1:8b"}], "defaultModel": "ollama:llama3.1:8b"},
+	)
+	role_guard = require_any_role(*chatbot.ALLOWED_ROLES)(role_guard=RoleGuard("CITIZEN"))
+
+	response = chatbot.get_chatbot_models(_role_guard=role_guard)
+
+	assert response["defaultModel"] == "ollama:llama3.1:8b"
+
+
+def test_chatbot_message_route_returns_reply(monkeypatch) -> None:
+	monkeypatch.setattr(
+		chatbot.chatbot_service,
+		"generate_reply",
+		lambda **_: {
+			"reply": "Skopje air quality is currently unavailable in chatbot context.",
+			"provider": "ollama",
+			"model": "llama3.1:8b",
+		},
+	)
+	role_guard = require_any_role(*chatbot.ALLOWED_ROLES)(role_guard=RoleGuard("CITIZEN"))
+	request = chatbot.ChatbotRequest(
+		messages=[chatbot.ChatbotMessagePayload(role="user", text="How is the air quality?")],
+	)
+
+	response = chatbot.create_chatbot_message(request, _role_guard=role_guard)
+
+	assert response["provider"] == "ollama"
+	assert response["model"] == "llama3.1:8b"
+
+
+def test_chatbot_message_route_maps_provider_errors(monkeypatch) -> None:
+	def raise_error(**_: object) -> dict[str, str]:
+		raise ChatbotProviderError(
+			"Model rate limited",
+			code="MODEL_RATE_LIMITED",
+			provider="openrouter",
+			model="meta-llama/llama-3.3-8b-instruct:free",
+			status_code=503,
+			retryable=True,
+		)
+
+	monkeypatch.setattr(chatbot.chatbot_service, "generate_reply", raise_error)
+	role_guard = require_any_role(*chatbot.ALLOWED_ROLES)(role_guard=RoleGuard("CITIZEN"))
+	request = chatbot.ChatbotRequest(
+		messages=[chatbot.ChatbotMessagePayload(role="user", text="Any emergencies?")],
+	)
+
+	with pytest.raises(HTTPException) as exc_info:
+		chatbot.create_chatbot_message(request, _role_guard=role_guard)
+
+	assert exc_info.value.status_code == 503
+	assert exc_info.value.detail["code"] == "MODEL_RATE_LIMITED"

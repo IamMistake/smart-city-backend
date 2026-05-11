@@ -146,6 +146,7 @@ class PollutionService:
             raise ValueError("bucketMinutes must be between 5 and 240")
 
         effective_sensor_id = sensor_id.strip() if sensor_id else "-1"
+        upstream_sensor_id = effective_sensor_id if effective_sensor_id != "-1" else None
         cache_key = self._history_cache_key(
             normalized_metric,
             window_hours,
@@ -172,7 +173,7 @@ class PollutionService:
                 metric=normalized_metric,
                 from_iso=from_iso,
                 to_iso=to_iso,
-                sensor_id=effective_sensor_id,
+                sensor_id=upstream_sensor_id,
             )
         except PulseEcoError as exc:
             if cached_entry:

@@ -16,6 +16,37 @@ class Settings:
     service_name: str = "fastapi-service"
     env: str = os.getenv("FASTAPI_ENV", "development")
     port: int = int(os.getenv("FASTAPI_SERVICE_PORT", "8000"))
+    chatbot_focus_city: str = os.getenv("CHATBOT_FOCUS_CITY", "Skopje").strip() or "Skopje"
+    chatbot_timeout_seconds: float = float(
+        os.getenv("CHATBOT_TIMEOUT_SECONDS", "30")
+    )
+    chatbot_primary_provider: str = os.getenv(
+        "CHATBOT_PRIMARY_PROVIDER", "ollama"
+    ).strip().lower()
+    chatbot_primary_model: str = os.getenv(
+        "CHATBOT_PRIMARY_MODEL", "llama3.1:8b"
+    ).strip()
+    chatbot_fallback_provider: str = os.getenv(
+        "CHATBOT_FALLBACK_PROVIDER", ""
+    ).strip().lower()
+    chatbot_fallback_model: str = os.getenv(
+        "CHATBOT_FALLBACK_MODEL", ""
+    ).strip()
+    chatbot_openrouter_base_url: str = os.getenv(
+        "CHATBOT_OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
+    ).strip()
+    chatbot_openrouter_api_key: str = os.getenv(
+        "CHATBOT_OPENROUTER_API_KEY", ""
+    ).strip()
+    chatbot_openrouter_site_url: str = os.getenv(
+        "CHATBOT_OPENROUTER_SITE_URL", ""
+    ).strip()
+    chatbot_openrouter_site_name: str = os.getenv(
+        "CHATBOT_OPENROUTER_SITE_NAME", "Smart City Platform"
+    ).strip()
+    chatbot_ollama_base_url: str = os.getenv(
+        "CHATBOT_OLLAMA_BASE_URL", "http://localhost:11434"
+    ).strip()
     pulse_city: str = os.getenv("PULSE_CITY", "skopje").strip().lower()
     pulse_base_url: str = os.getenv("PULSE_BASE_URL", "").strip()
     pulse_timeout_seconds: float = float(os.getenv("PULSE_TIMEOUT_SECONDS", "10"))

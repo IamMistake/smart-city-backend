@@ -57,17 +57,17 @@ class PulseEcoClient:
         metric: str,
         from_iso: str,
         to_iso: str,
-        sensor_id: str = "-1",
+        sensor_id: str | None = None,
     ) -> list[dict[str, Any]]:
-        payload = self._get_json(
-            "/dataRaw",
-            params={
-                "sensorId": sensor_id,
-                "type": metric,
-                "from": from_iso,
-                "to": to_iso,
-            },
-        )
+        params = {
+            "type": metric,
+            "from": from_iso,
+            "to": to_iso,
+        }
+        if sensor_id:
+            params["sensorId"] = sensor_id
+
+        payload = self._get_json("/dataRaw", params=params)
 
         if not isinstance(payload, list):
             raise PulseEcoError("Pulse dataRaw payload is not a list")
