@@ -1,14 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/smart_city
-    username: smart_city_user
-    password: smart_city_pass
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        hbm2ddl:
-          create_namespaces: true
+      ddl-auto: validate
   flyway:
-    enabled: false
+    enabled: true

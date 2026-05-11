@@ -238,6 +238,179 @@ class OpenRouterProvider:
         return "assistant" if role == "bot" else role
 
 
+class OpenAIProvider:
+    name = "openai"
+
+    def __init__(
+        self,
+        *,
+        base_url: str,
+        api_key: str,
+        timeout_seconds: float,
+    ) -> None:
+        self.base_url = base_url.rstrip("/")
+        self.api_key = api_key
+        self.timeout_seconds = timeout_seconds
+
+    def is_configured(self) -> bool:
+        return bool(self.api_key and self.base_url)
+
+    def generate_reply(
+        self,
+        *,
+        model: str,
+        messages: Sequence[ChatbotMessage],
+        system_prompt: str,
+    ) -> str:
+        if not self.is_configured():
+            raise ChatbotProviderError(
+                "OpenAI is not configured",
+                code="MODEL_UNAVAILABLE",
+                provider=self.name,
+                model=model,
+                retryable=False,
+            )
+
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                *[
+                    {
+                        "role": self._normalize_role(message.role),
+                        "content": message.text,
+                    }
+                    for message in messages
+                ],
+            ],
+            "temperature": 0.2,
+        }
+
+        body = self._post_json(
+            "/chat/completions",
+            payload=payload,
+            headers={"Authorization": f"Bearer {self.api_key}"},
+        )
+        choices = body.get("choices")
+        if not isinstance(choices, list) or not choices:
+            raise ChatbotProviderError(
+                "OpenAI returned no completion choices",
+                code="INVALID_PROVIDER_RESPONSE",
+                provider=self.name,
+                model=model,
+                retryable=True,
+            )
+
+        message = choices[0].get("message")
+        content = message.get("content") if isinstance(message, dict) else None
+        if not isinstance(content, str) or not content.strip():
+            raise ChatbotProviderError(
+                "OpenAI returned an empty response",
+                code="INVALID_PROVIDER_RESPONSE",
+                provider=self.name,
+                model=model,
+                retryable=True,
+            )
+
+        return content.strip()
+
+    def _post_json(
+        self,
+        path: str,
+        *,
+        payload: dict[str, Any],
+        headers: dict[str, str],
+    ) -> dict[str, Any]:
+        url = f"{self.base_url}{path}"
+
+        try:
+            with httpx.Client(timeout=self.timeout_seconds) as client:
+                response = client.post(url, json=payload, headers=headers)
+                response.raise_for_status()
+        except httpx.TimeoutException as exc:
+            raise ChatbotProviderError(
+                "OpenAI request timed out",
+                code="MODEL_TIMEOUT",
+                provider=self.name,
+                retryable=True,
+            ) from exc
+        except httpx.HTTPStatusError as exc:
+            raise self._map_http_error(exc, path=path)
+        except httpx.HTTPError as exc:
+            raise ChatbotProviderError(
+                "OpenAI request failed",
+                code="MODEL_UNAVAILABLE",
+                provider=self.name,
+                retryable=True,
+            ) from exc
+
+        try:
+            body = response.json()
+        except ValueError as exc:
+            raise ChatbotProviderError(
+                "OpenAI returned invalid JSON",
+                code="INVALID_PROVIDER_RESPONSE",
+                provider=self.name,
+                retryable=True,
+            ) from exc
+
+        if not isinstance(body, dict):
+            raise ChatbotProviderError(
+                "OpenAI returned an unexpected response payload",
+                code="INVALID_PROVIDER_RESPONSE",
+                provider=self.name,
+                retryable=True,
+            )
+
+        return body
+
+    def _map_http_error(
+        self,
+        exc: httpx.HTTPStatusError,
+        *,
+        path: str,
+    ) -> ChatbotProviderError:
+        status_code = exc.response.status_code
+        message = f"OpenAI returned {status_code} at {path}"
+
+        try:
+            body = exc.response.json()
+        except ValueError:
+            body = None
+
+        if isinstance(body, dict):
+            error = body.get("error")
+            if isinstance(error, dict) and isinstance(error.get("message"), str):
+                message = error["message"].strip() or message
+            elif isinstance(error, str) and error.strip():
+                message = error.strip()
+            elif isinstance(body.get("message"), str) and body["message"].strip():
+                message = body["message"].strip()
+
+        code = "MODEL_UNAVAILABLE"
+        retryable = status_code >= 500
+
+        if status_code == 429:
+            code = "MODEL_RATE_LIMITED"
+            retryable = True
+        elif status_code in (400, 404):
+            code = "MODEL_UNAVAILABLE"
+        elif status_code in (401, 403):
+            code = "MODEL_CONFIGURATION_ERROR"
+
+        return ChatbotProviderError(
+            message,
+            code=code,
+            provider=self.name,
+            status_code=503 if status_code >= 500 or status_code == 429 else status_code,
+            retryable=retryable,
+        )
+
+    @staticmethod
+    def _normalize_role(role: str) -> str:
+        return "assistant" if role == "bot" else role
+
+
 class OllamaProvider:
     name = "ollama"
 

@@ -8,19 +8,28 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.smartcity.springservice.domain.core.entity.Incident;
+import com.smartcity.springservice.domain.core.entity.UserProfile;
 import com.smartcity.springservice.domain.core.enums.IncidentStatus;
 import com.smartcity.springservice.domain.core.enums.IncidentType;
 import com.smartcity.springservice.domain.core.enums.PriorityLevel;
 import com.smartcity.springservice.domain.core.repository.IncidentRepository;
+import com.smartcity.springservice.domain.core.repository.UserProfileRepository;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 @Component
 @Profile("demo")
 public class IncidentSeeder {
 
     private final IncidentRepository incidentRepository;
+    private final UserProfileRepository userProfileRepository;
 
-    public IncidentSeeder(IncidentRepository incidentRepository) {
+    public IncidentSeeder(
+        IncidentRepository incidentRepository,
+        UserProfileRepository userProfileRepository
+    ) {
         this.incidentRepository = incidentRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     public void seed() {
@@ -29,8 +38,18 @@ public class IncidentSeeder {
             return;
         }
 
+        UserProfile reporter = userProfileRepository
+            .findByEmail("citizen1@smartcity.mk")
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Demo incident reporter user not found"
+                )
+            );
+
         incidentRepository.saveAll(List.of(
             create(
+                reporter,
                 "Fire at Bit Pazar",
                 "Large fire near the market area",
                 IncidentType.FIRE,
@@ -43,6 +62,7 @@ public class IncidentSeeder {
                 null
             ),
             create(
+                reporter,
                 "Car accident on blvd. ASNOM",
                 "Two vehicles collision",
                 IncidentType.ACCIDENT,
@@ -55,6 +75,7 @@ public class IncidentSeeder {
                 null
             ),
             create(
+                reporter,
                 "Protest at City Park",
                 "Peaceful protest gathering",
                 IncidentType.PROTEST,
@@ -67,6 +88,7 @@ public class IncidentSeeder {
                 null
             ),
             create(
+                reporter,
                 "Air pollution alert - Železara",
                 "PM10 levels critically high",
                 IncidentType.POLLUTION,
@@ -79,6 +101,7 @@ public class IncidentSeeder {
                 null
             ),
             create(
+                reporter,
                 "Police activity near Parliament",
                 "Increased police presence",
                 IncidentType.POLICE_ACTIVITY,
@@ -91,6 +114,7 @@ public class IncidentSeeder {
                 "2026-04-25T20:00:00Z"
             ),
             create(
+                reporter,
                 "Road damage on ul. Partizanska",
                 "Large pothole causing hazard",
                 IncidentType.OTHER,
@@ -103,6 +127,7 @@ public class IncidentSeeder {
                 null
             ),
             create(
+                reporter,
                 "Gas leak in Aerodrom",
                 "Suspected gas leak reported",
                 IncidentType.FIRE,
@@ -115,6 +140,7 @@ public class IncidentSeeder {
                 null
             ),
             create(
+                reporter,
                 "Flood in Gjorce Petrov",
                 "Street flooding after heavy rain",
                 IncidentType.OTHER,
@@ -127,6 +153,7 @@ public class IncidentSeeder {
                 null
             ),
             create(
+                reporter,
                 "Vandalism at Kale Fortress",
                 "Graffiti reported on walls",
                 IncidentType.OTHER,
@@ -139,6 +166,7 @@ public class IncidentSeeder {
                 "2026-04-22T13:00:00Z"
             ),
             create(
+                reporter,
                 "Traffic accident Chair",
                 "Minor collision no injuries",
                 IncidentType.ACCIDENT,
@@ -156,6 +184,7 @@ public class IncidentSeeder {
     }
 
     private Incident create(
+        UserProfile reporter,
         String title,
         String description,
         IncidentType type,
@@ -168,6 +197,7 @@ public class IncidentSeeder {
         String resolvedAt
     ) {
         Incident incident = new Incident();
+        incident.setReportedByUser(reporter);
         incident.setTitle(title);
         incident.setDescription(description);
         incident.setIncidentType(type);

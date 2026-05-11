@@ -17,23 +17,32 @@ public class UserProfileSeeder {
         this.userProfileRepository = userProfileRepository;
     }
 
-    public void seed() {
-        if (userProfileRepository.count() > 0) {
-            System.out.println(">>> [DEMO] UserProfiles already seeded, skipping.");
-            return;
-        }
+	public void seed() {
+		upsertUser("demo_clerk_001", "admin@smartcity.mk", "Admin User", UserRole.ADMIN);
+		upsertUser("demo_clerk_002", "operator@smartcity.mk", "Operator User", UserRole.OPERATOR);
+		upsertUser("demo_clerk_003", "citizen1@smartcity.mk", "Citizen One", UserRole.CITIZEN);
+		upsertUser("demo_clerk_004", "citizen2@smartcity.mk", "Citizen Two", UserRole.CITIZEN);
+		upsertUser("demo_clerk_005", "authority@smartcity.mk", "Authority User", UserRole.AUTHORITY);
 
-        userProfileRepository.save(createUser("demo_clerk_001", "admin@smartcity.mk", "Admin User", UserRole.ADMIN));
-        userProfileRepository.save(createUser("demo_clerk_002", "operator@smartcity.mk", "Operator User", UserRole.OPERATOR));
-        userProfileRepository.save(createUser("demo_clerk_003", "citizen1@smartcity.mk", "Citizen One", UserRole.CITIZEN));
-        userProfileRepository.save(createUser("demo_clerk_004", "citizen2@smartcity.mk", "Citizen Two", UserRole.CITIZEN));
-        userProfileRepository.save(createUser("demo_clerk_005", "authority@smartcity.mk", "Authority User", UserRole.AUTHORITY));
+		System.out.println(">>> [DEMO] Ensured 5 demo user profiles exist.");
+	}
 
-        System.out.println(">>> [DEMO] Seeded 5 user profiles.");
-    }
+	private void upsertUser(String clerkUserId, String email, String fullName, UserRole role) {
+		UserProfile user = userProfileRepository
+			.findByClerkUserIdAndDeletedAtIsNull(clerkUserId)
+			.orElseGet(UserProfile::new);
 
-    private UserProfile createUser(String clerkUserId, String email, String fullName, UserRole role) {
-        UserProfile user = new UserProfile();
+		user.setClerkUserId(clerkUserId);
+		user.setEmail(email);
+		user.setFullName(fullName);
+		user.setRole(role);
+		user.setActive(true);
+
+		userProfileRepository.save(user);
+	}
+
+	private UserProfile createUser(String clerkUserId, String email, String fullName, UserRole role) {
+		UserProfile user = new UserProfile();
         user.setClerkUserId(clerkUserId);
         user.setEmail(email);
         user.setFullName(fullName);

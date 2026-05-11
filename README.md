@@ -238,8 +238,9 @@ Chatbot endpoint (FastAPI):
 - `POST /api/chatbot/messages`
 - Uses free-model providers configured through env vars.
 - Supported providers in this repo:
-  - `ollama` for local models
-  - `openrouter` for free hosted models
+- `ollama` for local models
+- `openrouter` for free hosted models
+- `openai` for OpenAI-hosted models
 - Default selection comes from:
   - `CHATBOT_PRIMARY_PROVIDER`
   - `CHATBOT_PRIMARY_MODEL`
@@ -247,11 +248,20 @@ Chatbot endpoint (FastAPI):
   - `CHATBOT_FALLBACK_PROVIDER`
   - `CHATBOT_FALLBACK_MODEL`
 - Provider-specific env vars:
+  - `CHATBOT_OPENAI_BASE_URL`
+  - `CHATBOT_OPENAI_API_KEY`
   - `CHATBOT_OLLAMA_BASE_URL`
   - `CHATBOT_OPENROUTER_BASE_URL`
   - `CHATBOT_OPENROUTER_API_KEY`
   - `CHATBOT_OPENROUTER_SITE_URL`
   - `CHATBOT_OPENROUTER_SITE_NAME`
+
+Demo data seeding:
+
+- Set `SPRING_PROFILES_ACTIVE=demo` to enable demo seeders.
+- The demo profile seeds user profiles, incidents, cameras, police units, and city events.
+- The current incident seeder inserts 10 Skopje incidents when the incidents table is empty.
+- The demo profile in this repo is safe for shared Postgres and keeps Flyway + JPA validation enabled.
 
 ### Windows (Command Prompt)
 

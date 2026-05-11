@@ -32,6 +32,13 @@ class Settings:
     chatbot_fallback_model: str = os.getenv(
         "CHATBOT_FALLBACK_MODEL", ""
     ).strip()
+    chatbot_openai_base_url: str = os.getenv(
+        "CHATBOT_OPENAI_BASE_URL", "https://api.openai.com/v1"
+    ).strip()
+    chatbot_openai_api_key: str = (
+        os.getenv("CHATBOT_OPENAI_API_KEY", "").strip()
+        or os.getenv("OPENAI_API_KEY", "").strip()
+    )
     chatbot_openrouter_base_url: str = os.getenv(
         "CHATBOT_OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
     ).strip()
