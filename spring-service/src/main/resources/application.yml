@@ -4,7 +4,7 @@ spring:
   application:
     name: spring-service
   datasource:
-    url: jdbc:postgresql://localhost:${POSTGRES_PORT:5432}/${POSTGRES_DB:smart_city}
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:smart_city}
     username: ${POSTGRES_USER:smart_city_user}
     password: ${POSTGRES_PASSWORD:smart_city_pass}
   jpa:

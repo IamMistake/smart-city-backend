@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+import logging
 from typing import Any
 
 import jwt
@@ -15,6 +16,7 @@ from app.core.config import settings
 from app.db.session import get_db
 
 bearer_scheme = HTTPBearer(auto_error=False)
+logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
@@ -37,13 +39,15 @@ def decode_clerk_token(token: str) -> dict[str, Any]:
 		signing_key = get_jwk_client().get_signing_key_from_jwt(token)
 		decode_kwargs: dict[str, Any] = {
 			"algorithms": ["RS256"],
-			"issuer": settings.clerk_issuer_url,
+			"options": {
+				"verify_iss": False,
+			},
 		}
 
 		if settings.clerk_audience:
 			decode_kwargs["audience"] = settings.clerk_audience
 		else:
-			decode_kwargs["options"] = {"verify_aud": False}
+			decode_kwargs["options"]["verify_aud"] = False
 
 		claims = jwt.decode(token, signing_key.key, **decode_kwargs)
 		if not isinstance(claims, dict):
@@ -52,17 +56,32 @@ def decode_clerk_token(token: str) -> dict[str, Any]:
 				detail="Invalid token payload",
 			)
 
+		issuer = str(claims.get("iss", "")).strip()
+		expected_issuer = settings.clerk_issuer_url.strip()
+		if _normalize_issuer(issuer) != _normalize_issuer(expected_issuer):
+			raise HTTPException(
+				status_code=status.HTTP_401_UNAUTHORIZED,
+				detail="Invalid token issuer",
+			)
+
 		return claims
 	except RuntimeError as error:
 		raise HTTPException(
 			status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			detail=str(error),
 		) from error
+	except HTTPException:
+		raise
 	except PyJWTError as error:
+		logger.warning("FastAPI Clerk token validation failed: %s", error)
 		raise HTTPException(
 			status_code=status.HTTP_401_UNAUTHORIZED,
 			detail="Invalid authentication token",
 		) from error
+
+
+def _normalize_issuer(value: str) -> str:
+	return value.rstrip("/")
 
 
 def get_clerk_claims(

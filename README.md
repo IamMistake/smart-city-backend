@@ -7,6 +7,39 @@ Monorepo-style backend workspace for two microservices:
 
 PostgreSQL is provided via Docker Compose from the repo root.
 
+## Full-stack Docker Compose
+
+The repository root contains `compose.yaml` for the full application stack:
+
+- `frontend`
+- `spring-service`
+- `fastapi-service`
+- `postgres`
+
+Environment files used by the stack:
+
+- `smart-city-frontend/.env` for the frontend build
+- `smart-city-backend/.env` for backend runtime configuration
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+Published ports:
+
+- Frontend: `http://localhost:3000`
+- Spring service: `http://localhost:8080`
+- FastAPI service: `http://localhost:8000`
+- Postgres: `localhost:5432`
+
+Container notes:
+
+- Spring connects to Postgres through `POSTGRES_HOST=postgres` inside Compose.
+- FastAPI runs `alembic upgrade head` on container startup before serving requests.
+- Frontend is built as a static Vite bundle and served by Nginx with SPA route fallback.
+
 ## Project Structure
 
 ```text
@@ -97,6 +130,7 @@ cp .env.example .env
 
 - `http://localhost:5173` (Vite dev)
 - `http://localhost:5000` (frontend preview)
+- `http://localhost:3000` (Dockerized frontend)
 
 ## Run PostgreSQL
 
