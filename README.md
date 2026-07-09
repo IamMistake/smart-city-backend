@@ -1,6 +1,8 @@
 # Smart City Backend
 
-Monorepo-style backend workspace for two microservices:
+Backend monorepo for the Smart City Monitoring Platform — powers emergency incident tracking, real-time air pollution monitoring, and a city-information chatbot.
+
+Contains two microservices:
 
 - `spring-service` (Spring Boot + Maven)
 - `fastapi-service` (FastAPI + Python)
